@@ -1,0 +1,25 @@
+table 
+{
+    border-collapse: collapse;
+	border: 1px solid black;
+	width: 500px;
+	height:500px;
+	table-layout: fixed;
+}
+
+th
+{
+    padding: 10px;
+}
+
+.tdClass
+{
+	border: 1px solid black;
+	display:table-cell;
+    width:25%;
+	height: 20px;
+}
+.headerClass
+{
+	display:inline;
+}
