@@ -13,6 +13,12 @@ var rowCount = 0;
 var colCount = 0;
 
 //Calls functions to construct game board
+function Welcome()
+{	
+	alert("Hello! \n Welcome To My Game");
+	alert("For A Diffrent Puzzle, Please Hit 'New Puzzle'");
+}
+
 function initGame()
 {
 	if (document.getElementById('resetButton').style.display === "none")
@@ -20,12 +26,12 @@ function initGame()
 		decide();																	//CHECKS TO RESET PAGE------------------
 	}
 	
-	createPuzzle();																	//CALLS TO CREATE PUZZLE----------------	{Complete}
+	createPuzzle();																	//CALLS TO CREATE PUZZLE----------------
 	
 	hints();																		//CALLS TO CREATE HINT------------------	
 
 
-	tableCreate();																	//CALLS TO CREATE TABLE-----------------	{Generates table and toggles colour/ No Win Check}
+	tableCreate();																	//CALLS TO CREATE TABLE-----------------
 }
 
 //Querys for random value and appends said value to solution array
@@ -56,7 +62,7 @@ function random()
 }
 
 //Builds Main Table
-function tableCreate()
+function tableCreate()													//{1}Table Setup------------------------------------
 {
 	var tableHolder = document.getElementById("tableHolder");
     tableHolder.innerHTML = "";
@@ -119,7 +125,13 @@ function tableCreate()
 			if (td.innerHTML === " ")						//ADD CELL TO CLASS---------------------------------------------
 				td.classList.add('tdClass');
 			else
-				td.classList.add('headerClass');
+			{
+				if (i === 0 )
+					td.classList.add('headerCol');
+				else
+					
+					td.classList.add('headerRow');
+			}
 			
 			if (winArr[i][j] != null)							//ASSIGN COLOUR TO ALL CELLS (DEFAULT)----------------------
 				td.style.backgroundColor = colour1;
@@ -143,7 +155,7 @@ function tableCreate()
 }
 
 //on-call: Changes colour of element
-function toggleColour(element)
+function toggleColour(element)									//{2}Ability To Toggle Table CELLS--------------------------
 {
 	if (element.style.backgroundColor === colour1)
 		element.style.backgroundColor = colour2;
@@ -156,6 +168,7 @@ function toggleColour(element)
 function checkVictory()
 {
 	var score = 0;
+	var total = GRID * GRID;
 	for(var i = 1; i < SIZE; i++)
 		for(var j = 1; j < SIZE; j++)
 		{
@@ -172,15 +185,17 @@ function checkVictory()
 			{
 				console.log("row: " + i + "col: " + j + "is correct");
 				score++;
+				console.log("Score: " + score + " Total: " + total);
 			}
 			else{
 				console.log("row: " + i + "col: " + j + "is incorrect");
 				return -1;
 			}
 		}
-	var total = SIZE^2;
+	
 	if (score === total)
 		alert("Hello! \n\n Congratulation! \n You Win!");
+	
 }
 
 //Displays Hints
@@ -196,7 +211,7 @@ function hints()
 		{
 			
 			num1 = calculate(j, winArr[i][j], num1, "row");
-			num2 = calculate(i, winArr[j][i], num2, "col");
+			num2 = calculate(j, winArr[j][i], num2, "col");
 			
 			if( j === 1)
 			{
@@ -208,8 +223,11 @@ function hints()
 		console.log(name1 + " : " + num1);
 		console.log(name2 + " : " + num2);
 		
-		rowArr[i] = num1;
-		colArr[i] = num2;
+		rowArr[i] = num2;
+		colArr[i] = num1;
+		
+		num1 = " ";
+		num2 = " ";
 		
 		//document.getElementById(name1).innerHTML(num1);
 		//document.getElementById(name2).innerHTML(num2);
@@ -252,17 +270,27 @@ function calculate(i,a,info,usage)
 		{
 			if (colCount != 0)
 			{
-				info += colCount + ", ";
+				info += colCount + " \n ";
 				colCount = 0;
 				console.log("info col" + info);
 			}
 		}
 	}
 	
-	if(i === SIZE)
+	if(i === SIZE-1)
 	{
-		rowCount = 0;
-		colCount = 0;
+		if (usage === "row")
+		{
+			if(rowCount!=0)
+			info += rowCount + ", ";
+			rowCount = 0;
+		}
+		else
+		{
+			if(colCount!=0)
+			info += colCount + ", ";
+			colCount = 0;
+		}
 	}
 	
 	txt = info;
@@ -270,7 +298,7 @@ function calculate(i,a,info,usage)
 	return txt;
 }
 
-function show()
+function show()												//{5}Show Solution Button Working----------------------------------
 {
 	console.log("Entering Show");
 	var tableHolder = document.getElementById("tableHolder");
@@ -290,23 +318,59 @@ function show()
 			{
 				var elem2 = winArr[i][j];
 				if (elem2 === 0)
-					id = colour1;
+					marker = colour1;
 				else
-					id = colour2;
+					marker = colour2;
 			}
 			else
-				id = 'grey';
+				marker = 'grey';
 			
 			var td = tr.insertCell();
-
-            td.appendChild(document.createTextNode(" "));
+			var id = " ";
 			
-			td.style.backgroundColor = id;
+			if(j === 0)										//ASSIGN ID TO ALL LABEL CELLS----------------------------------
+				if( i != 0)
+				{
+					//var name = "Row" + c;
+					//td.setAttribute('id',name);
+					id = colArr[i];
+					//c++;
+				}
+				else
+				{
+					//td.setAttribute('id','board');
+				}
+			else if(i === 0)
+				if( j != 0)
+				{
+					//var name = "Col" + d;
+					//td.setAttribute('id',name);
+					id = rowArr[j];
+					//d++;
+				}
+				else
+				{
+					//td.setAttribute('id','board');
+				}
+			else
+			{
+				console.log("0,0");
+			}
+
+            td.appendChild(document.createTextNode(id));
+			
+			td.style.backgroundColor = marker;
 			
 			if (td.innerHTML === " ")						//ADD CELL TO CLASS---------------------------------------------
 				td.classList.add('tdClass');
 			else
-				td.classList.add('headerClass');
+			{
+				if (i === 0 )
+					td.classList.add('headerCol');
+				else
+					
+					td.classList.add('headerRow');
+			}
 		}
 	}
 	tableHolder.appendChild(tbl);
@@ -315,7 +379,7 @@ function show()
 	console.log("Building Solution");
 }
 
-function reset()
+function reset()											//{3}Reset Button Working---------------------------------------
 {
 	var tableHolder = document.getElementById("tableHolder");
     tableHolder.innerHTML = "";
@@ -329,18 +393,47 @@ function reset()
         for(var j = 0; j < SIZE; j++)
         {
 			if(i != 0 && j != 0)
-				id = "blue";
+				marker = "blue";
 			else
-				id = defColour;
+				marker = defColour;
             var td = tr.insertCell();
 			
-            td.appendChild(document.createTextNode(" "));
+			var id = " ";
+			if(j === 0)										//ASSIGN ID TO ALL LABEL CELLS----------------------------------
+				if( i != 0)
+				{
+					id = colArr[i];
+				}
+				else
+				{
+				}
+			else if(i === 0)
+				if( j != 0)
+				{
+					id = rowArr[j];
+				}
+				else
+				{
+				}
+			else
+			{
+				console.log("0,0");
+			}
+			
+            td.appendChild(document.createTextNode(id));
 			if (td.innerHTML === " ")						//ADD CELL TO CLASS---------------------------------------------
 				td.classList.add('tdClass');
 			else
-				td.classList.add('headerClass');
+			{
+				if (i === 0 )
+					td.classList.add('headerCol');
+				else
+					
+					td.classList.add('headerRow');
+			}
+			
             td.style.border = '1px solid black';
-			td.style.backgroundColor = id;
+			td.style.backgroundColor = marker;
 			td.addEventListener("click", function(e)
 			{
 				e = e || window.event;

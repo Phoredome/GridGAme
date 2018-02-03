@@ -5,6 +5,7 @@ table
 	width: 500px;
 	height:500px;
 	table-layout: fixed;
+	text-align: justify;
 }
 
 th
@@ -16,10 +17,22 @@ th
 {
 	border: 1px solid black;
 	display:table-cell;
-    width:25%;
-	height: 20px;
+    width:20%;
+	height: 25px;
 }
-.headerClass
+
+.headerCol
+{
+	display:inline-block;
+	display:table-cell;
+	border: 1px solid black;
+	vertical-align: text-top;
+	white-space: pre-wrap;
+}
+.headerRow
 {
 	display:inline;
+	display:table-cell;
+	border: 1px solid black;
+	text-align: justify;
 }
